@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Món Quà Đặc Biệt Cho Bạn 🎁</title>
+    <meta name="language" content="vi">
+    <meta name="description" content="Một món quà đầy yêu thương đang chờ bạn khám phá! Nhấn để xem lời chúc đặc biệt!">
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="./image/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="./image/logo.png">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Món Quà Đặc Biệt Cho Bạn 🎁">
+    <meta property="og:description"
+        content="Một món quà đầy yêu thương đang chờ bạn khám phá! Nhấn để xem lời chúc đặc biệt!">
+    <meta property="og:image" content="https://happybirthdaydeargift.vercel.app/image/logo.png">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Món Quà Đặc Biệt Cho Bạn 🎁">
+    <meta name="twitter:description"
+        content="Một món quà đầy yêu thương đang chờ bạn khám phá! Nhấn để xem lời chúc đặc biệt!">
+    <meta name="twitter:image" content="https://happybirthdaydeargift.vercel.app/image/birthday-gift.jpg">
+
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+
+<body>
+    <!-- Đã xóa nút chuyển ngôn ngữ và Google Login -->
+
+    <canvas id="matrix-rain" style="display: none;"></canvas>
+    <canvas style="position:absolute;width:100%;height:100%;z-index:9999;display:none;" class="canvas"></canvas>
+    <div class="overlay">
+        <div class="stars-container" id="starsContainer"></div>
+        <img id="gift-image" src="happy.gif"
+            style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; max-width: 80%; max-height: 80%;" />
+        <div class="content-display" id="contentDisplay">
+            <p id="contentText"></p>
+        </div>
+        <div class="firework-container" id="fireworkContainer"></div>
+        <div class="book-container">
+            <div class="book" id="book"></div>
+        </div>
+
+        <button class="music-control" id="musicControl" title="Play/Pause Music">
+            ▶
+        </button>
+
+        <button class="settings-button" id="settingsButton" title="Settings">
+            
+        </button>
+
+        <!-- Settings hint element -->
+        <div id="settingsHint" class="settings-hint">
+            <div class="hint-text"></div>
+        </div>
+
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Cài Đặt Trang Web</h2>
+                    <span class="close">×</span>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>🎵 Cài Đặt Âm Thanh</h3>
+                        <div class="form-group">
+                            <label for="backgroundMusic">Nhạc Nền:</label>
+                            <div class="music-select-row">
+                                <select id="backgroundMusic">
+                                    <option value="" disabled selected>Đang tải danh sách nhạc...</option>
+                                </select>
+                                <button type="button" id="musicPreviewButton" class="music-preview-btn">▶ Nghe thử</button>
+                            </div>
+                            <span id="musicPreviewStatus" class="music-preview-status">Chọn bài nhạc rồi nhấn "Nghe thử"</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>⏰ Cài Đặt Thời Gian</h3>
+                        <div class="form-group">
+                            <label for="countdownTime">Thời Gian Đếm Ngược:</label>
+                            <select id="countdownTime">
+                                <option value="3">3 giây</option>
+                                <option value="5">5 giây</option>
+                                <option value="10">10 giây</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>🌧️ Cài Đặt Hiệu Ứng Mưa Chữ</h3>
+                        <div class="form-group">
+                            <label for="matrixText">Chữ chính mưa chữ:</label>
+                            <input type="text" id="matrixText" value="HAPPYBIRTHDAY"
+                                placeholder="Nhập chữ cho hiệu ứng mưa chữ">
+                        </div>
+                        <div class="form-group">
+                            <label>Chọn màu:</label>
+                            <div class="color-theme-buttons">
+                                <button type="button" class="color-theme-btn active" data-theme="pink">
+                                    <div class="color-preview pink-preview"></div>
+                                    <span>Hồng ngọt ngào</span>
+                                </button>
+                                <button type="button" class="color-theme-btn" data-theme="blue">
+                                    <div class="color-preview blue-preview"></div>
+                                    <span>Xanh dương mát mẻ</span>
+                                </button>
+                                <button type="button" class="color-theme-btn" data-theme="purple">
+                                    <div class="color-preview purple-preview"></div>
+                                    <span>Tím mộng mơ</span>
+                                </button>
+                                <button type="button" class="color-theme-btn" data-theme="custom">
+                                    <div class="color-preview custom-preview"></div>
+                                    <span>Tùy chỉnh màu</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-row" id="customColorSection" style="display: none;">
+                            <div class="form-group">
+                                <label for="matrixColor1">Màu mưa chữ 1:</label>
+                                <input type="color" id="matrixColor1" value="#ff69b4">
+                            </div>
+                            <div class="form-group">
+                                <label for="matrixColor2">Màu mưa chữ 2:</label>
+                                <input type="color" id="matrixColor2" value="#ff1493">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>✨ Cài Đặt Chữ Chính</h3>
+                        <div class="form-group">
+                            <label for="sequenceText">Nội Dung chữ chính:</label>
+                            <span style="color: rgb(132, 132, 132); font-weight: normal; font-size: 12px; display: block; margin-bottom: 5px;">
+                                Lưu ý: hãy ngăn cách bằng dấu | để tách từ, không nên để một dòng quá dài
+                            </span>
+                            <input type="text" id="sequenceText" value="HAPPY|BIRTHDAY|TO|YOU|❤"
+                                placeholder="Ví dụ: CHÚC|MỪNG|SINH|NHẬT|...">
+                        </div>
+                        <div class="form-group" id="sequenceColorSection" style="display: none;">
+                            <label for="sequenceColor">Màu chữ chính:</label>
+                            <input type="color" id="sequenceColor" value="#ff69b4">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>🎁 Cài Đặt Hình Động</h3>
+                        <div class="form-group">
+                            <label for="giftImage">Hình Động (tùy chọn):</label>
+                            <select id="giftImage">
+                                <option value="">Không có</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Ẩn các select enableBook và enableHeart -->
+                    <div class="form-group" style="display: none;">
+                        <label for="enableBook">Hiển thị sách:</label>
+                        <select id="enableBook">
+                            <option value="true" selected>Bật</option>
+                        </select>
+                    </div>
+
+                    <div class="settings-section" id="bookSettingsSection">
+                        <h3>📖 Cài Đặt Trang Sách</h3>
+                        <div id="pageConfigs">
+                        </div>
+                        
+                        <div class="form-group" style="display: none;">
+                            <label for="enableHeart">Hiển thị hiệu ứng trái tim:</label>
+                            <select id="enableHeart">
+                                <option value="true" selected>Bật</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: none;">
+                        <label for="isSave">Lưu QR vĩnh viễn:</label>
+                        <input type="checkbox" id="isSave" style="margin-left: 10px;">
+                    </div>
+
+                    <div class="settings-p"
+                        style="margin-bottom: 12px; background: #fff8e1; color: #b26a00; border-radius: 7px; padding: 10px 14px; font-size: 15px; box-shadow: 0 1px 6px rgba(0,0,0,0.04);">
+                        <div class="settings-p" style="margin-bottom: 4px;">
+                            ⏳ Hạn sử dụng là <b>30 ngày</b>
+                        </div>
+                        <div class="settings-p">
+                            🥰 Hãy <a href="https://www.tiktok.com/@iamtritoan?is_from_webapp=1&sender_device=pc"
+                                target="_blank" style="color:#ff0050;font-weight:bold;text-decoration:underline;">follow
+                                mình</a> để cập nhật những website mới nhất, nhanh nhất nhé!
+                        </div>
+                    </div>
+
+                    <button id="applySettings" class="apply-settings-btn">🎉 Áp Dụng Cài Đặt</button>
+                </div>
+            </div>
+        </div>
+
+        <audio id="birthdayAudio" loop>
+            <source src="./music/happybirtday_uia.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <div class="copyright">
+            Website được tạo bởi tiktok: <a
+                href="https://www.tiktok.com/@iamtritoan?is_from_webapp=1&sender_device=pc">iamtritoan</a>
+        </div>
+
+        <div id="orientation-lock">
+            <div class="phone-icon">
+                <img src="./image/screen.png" alt="">
+            </div>
+        </div>
+
+        <!-- Nút Full màn hình, chỉ hiện trên Android -->
+        <button id="fullscreenBtn" style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 990010;
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            background: #222;
+            color: #fff;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: none;
+        ">
+            <img style="width: 20px; height: 20px; vertical-align: middle;" src="./image/full.png" alt="">
+        </button>
+
+        <script src="./jscp/detect-devtools.js"></script>
+        <script type='text/javascript'>
+            const keyName = 'key';
+            const keyValue = '9ac7ec230e0e4513578f309d6d3579ad';
+            DisableDevtool({
+                tkName: keyName,
+                md5: keyValue,
+                interval: '100',
+            });
+        </script>
+
+        <!-- Chỉ giữ lại các file cần thiết -->
+        <script src="./jscp/api.obf.js"></script>
+        <script src="./jscp/settings.js"></script>
+        <script src="./jscp/main.js"></script>
+        <script src="./jscp/ui.js"></script>
+    </div>
+</body>
+
+</html>
